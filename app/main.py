@@ -1,13 +1,17 @@
 from fastapi import FastAPI
+from mangum import Mangum
 
+import os
 
-app = FastAPI()
+stage = os.environ.get('STAGE', None)
+openapi_prefix = f'/{stage}' if stage else '/'
+
+app = FastAPI(title='API', openapi_prefix=openapi_prefix)
 
 
 @app.get('/')
 async def root():
     return {'message': 'Haiya'}
 
-@app.get('/users')
-async def get_users():
-    return {'message': 'Get User'}
+
+handler = Mangum(app)
